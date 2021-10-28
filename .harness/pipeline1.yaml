@@ -1,0 +1,51 @@
+pipeline:
+    name: pipeline1
+    identifier: pipeline1
+    projectIdentifier: jasmeetGitSyncOct
+    orgIdentifier: default
+    tags: {}
+    stages:
+        - stage:
+              name: stage1
+              identifier: stage1
+              description: ""
+              type: Deployment
+              spec:
+                  serviceConfig:
+                      serviceRef: service1
+                      serviceDefinition:
+                          type: Kubernetes
+                          spec:
+                              variables: []
+                  infrastructure:
+                      environmentRef: env1
+                      infrastructureDefinition:
+                          type: KubernetesDirect
+                          spec:
+                              connectorRef: account.dfgsdg
+                              namespace: dsfsdf
+                              releaseName: release-<+INFRA_KEY>
+                      allowSimultaneousDeployments: false
+                  execution:
+                      steps:
+                          - step:
+                                name: Rollout Deployment
+                                identifier: rolloutDeployment
+                                type: K8sRollingDeploy
+                                timeout: 10m
+                                spec:
+                                    skipDryRun: false
+                      rollbackSteps:
+                          - step:
+                                name: Rollback Rollout Deployment
+                                identifier: rollbackRolloutDeployment
+                                type: K8sRollingRollback
+                                timeout: 10m
+                                spec: {}
+              tags: {}
+              failureStrategies:
+                  - onFailure:
+                        errors:
+                            - AllErrors
+                        action:
+                            type: StageRollback
